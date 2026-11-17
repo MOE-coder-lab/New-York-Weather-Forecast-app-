@@ -1,0 +1,844 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101827">
+
+<title>New York Weather | Live Weather Forecast</title>
+
+<style>
+:root {
+    --bg: #101827;
+    --panel: #1b2940;
+    --panel-light: #243650;
+    --text: #f5f8ff;
+    --muted: #a9b9cf;
+    --accent: #77c7ff;
+    --border: rgba(255,255,255,.10);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background:
+        radial-gradient(circle at top right, #244b70 0%, transparent 35%),
+        linear-gradient(145deg, #101827, #15283d 65%, #101827);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 25px 16px 45px;
+}
+
+.container {
+    max-width: 1050px;
+    margin: auto;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 35px;
+}
+
+.brand {
+    font-size: 21px;
+    font-weight: bold;
+    letter-spacing: .5px;
+}
+
+.brand span {
+    color: var(--accent);
+}
+
+.header-right {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+button {
+    border: 1px solid var(--border);
+    background: var(--panel-light);
+    color: white;
+    padding: 11px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: .25s;
+}
+
+button:hover {
+    background: #345579;
+    transform: translateY(-2px);
+}
+
+.hero {
+    margin-bottom: 27px;
+}
+
+.location {
+    color: var(--accent);
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.hero h1 {
+    font-size: clamp(29px, 5vw, 45px);
+    margin-bottom: 9px;
+}
+
+.subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.main-weather {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 18px;
+    margin-bottom: 20px;
+}
+
+.card {
+    background: rgba(27,41,64,.90);
+    border: 1px solid var(--border);
+    border-radius: 19px;
+    padding: 25px;
+    box-shadow: 0 12px 35px rgba(0,0,0,.14);
+}
+
+.current-card {
+    background: linear-gradient(140deg, #254d72, #1b2940 75%);
+    min-height: 260px;
+}
+
+.card-label {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+
+.weather-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.temperature {
+    font-size: clamp(55px, 10vw, 82px);
+    font-weight: 300;
+    letter-spacing: -5px;
+}
+
+.weather-icon {
+    font-size: 65px;
+}
+
+.condition {
+    font-size: 18px;
+    margin-top: 8px;
+}
+
+.feels {
+    color: var(--muted);
+    margin-top: 12px;
+    font-size: 14px;
+}
+
+.updated {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 22px;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 13px;
+}
+
+.detail {
+    background: rgba(255,255,255,.045);
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    padding: 17px 13px;
+}
+
+.detail-icon {
+    font-size: 23px;
+    margin-bottom: 12px;
+}
+
+.detail-name {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 7px;
+}
+
+.detail-value {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.section-title {
+    font-size: 20px;
+    margin-bottom: 18px;
+}
+
+.forecast-section {
+    margin-top: 25px;
+}
+
+.forecast-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+}
+
+.forecast-day {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 19px 10px;
+    border-radius: 15px;
+    text-align: center;
+    transition: .25s;
+}
+
+.forecast-day:hover {
+    transform: translateY(-5px);
+    background: var(--panel-light);
+}
+
+.day-name {
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.day-icon {
+    font-size: 34px;
+    margin: 17px 0;
+}
+
+.day-condition {
+    font-size: 11px;
+    color: var(--muted);
+    min-height: 28px;
+}
+
+.day-temps {
+    margin-top: 13px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.day-low {
+    color: var(--muted);
+    margin-left: 6px;
+    font-weight: normal;
+}
+
+.rain-chance {
+    font-size: 11px;
+    color: var(--accent);
+    margin-top: 12px;
+}
+
+.sun-section {
+    margin-top: 25px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.sun-card {
+    display: flex;
+    align-items: center;
+    gap: 17px;
+}
+
+.sun-icon {
+    font-size: 34px;
+}
+
+.sun-label {
+    color: var(--muted);
+    font-size: 12px;
+    margin-bottom: 7px;
+}
+
+.sun-time {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.status {
+    margin-top: 25px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.status span {
+    color: #83e3ac;
+}
+
+.loader {
+    text-align: center;
+    padding: 30px;
+    color: var(--muted);
+}
+
+.error {
+    color: #ff9b9b;
+    text-align: center;
+    padding: 15px;
+    font-size: 14px;
+}
+
+footer {
+    text-align: center;
+    margin-top: 45px;
+    border-top: 1px solid var(--border);
+    padding-top: 25px;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.9;
+}
+
+footer strong {
+    color: var(--accent);
+}
+
+@media(max-width: 700px) {
+    .main-weather {
+        grid-template-columns: 1fr;
+    }
+
+    .forecast-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .forecast-day:last-child {
+        grid-column: span 2;
+    }
+}
+
+@media(max-width: 380px) {
+    .details-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .forecast-grid {
+        gap: 8px;
+    }
+
+    .forecast-day {
+        padding: 15px 5px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+    <div class="brand">WEATHER<span>NYC.</span></div>
+
+    <div class="header-right">
+        <button id="unitBtn" onclick="toggleUnit()">°C / °F</button>
+        <button onclick="loadWeather()">↻ Refresh</button>
+    </div>
+</header>
+
+<section class="hero">
+    <div class="location">📍 NEW YORK, UNITED STATES</div>
+    <h1>New York City Weather</h1>
+    <p class="subtitle" id="todayDate">
+        Current weather and five-day forecast
+    </p>
+</section>
+
+<div id="loading" class="loader">
+    Loading live New York weather...
+</div>
+
+<div id="error" class="error" style="display:none;"></div>
+
+<div id="weatherContent" style="display:none;">
+
+    <section class="main-weather">
+
+        <div class="card current-card">
+
+            <div class="card-label">CURRENT CONDITIONS</div>
+
+            <div class="weather-main">
+
+                <div>
+                    <div class="temperature" id="temperature">--°</div>
+                    <div class="condition" id="condition">Loading...</div>
+                    <div class="feels" id="feelsLike">
+                        Feels like --
+                    </div>
+                </div>
+
+                <div class="weather-icon" id="weatherIcon">🌤️</div>
+
+            </div>
+
+            <div class="updated" id="updated">
+                Waiting for weather data...
+            </div>
+
+        </div>
+
+        <div class="card">
+
+            <div class="card-label">WEATHER DETAILS</div>
+
+            <div class="details-grid">
+
+                <div class="detail">
+                    <div class="detail-icon">💧</div>
+                    <div class="detail-name">Humidity</div>
+                    <div class="detail-value" id="humidity">--%</div>
+                </div>
+
+                <div class="detail">
+                    <div class="detail-icon">💨</div>
+                    <div class="detail-name">Wind Speed</div>
+                    <div class="detail-value" id="wind">--</div>
+                </div>
+
+                <div class="detail">
+                    <div class="detail-icon">🌧️</div>
+                    <div class="detail-name">Precipitation</div>
+                    <div class="detail-value" id="rain">-- mm</div>
+                </div>
+
+                <div class="detail">
+                    <div class="detail-icon">☀️</div>
+                    <div class="detail-name">UV Index</div>
+                    <div class="detail-value" id="uv">--</div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <section class="forecast-section">
+
+        <h2 class="section-title">Five-Day Forecast</h2>
+
+        <div class="forecast-grid" id="forecast">
+
+        </div>
+
+    </section>
+
+    <section class="sun-section">
+
+        <div class="card sun-card">
+            <div class="sun-icon">🌅</div>
+            <div>
+                <div class="sun-label">SUNRISE</div>
+                <div class="sun-time" id="sunrise">--:--</div>
+            </div>
+        </div>
+
+        <div class="card sun-card">
+            <div class="sun-icon">🌇</div>
+            <div>
+                <div class="sun-label">SUNSET</div>
+                <div class="sun-time" id="sunset">--:--</div>
+            </div>
+        </div>
+
+    </section>
+
+</div>
+
+<div class="status" id="status">
+    <span>●</span> Weather service initializing...
+</div>
+
+<footer>
+    <strong>WEATHERNYC.</strong><br>
+    Your reliable weather companion for New York City.<br>
+    Live weather data powered by Open-Meteo.<br>
+    Automatic updates every 10 minutes.<br><br>
+    © <span id="year"></span> WeatherNYC. All rights reserved.
+</footer>
+
+</div>
+
+<script>
+
+// ====================================
+// NEW YORK CITY WEATHER APPLICATION
+// ====================================
+
+// New York City coordinates
+const LATITUDE = 40.7128;
+const LONGITUDE = -74.0060;
+
+// Weather refresh interval: 10 minutes
+const REFRESH_INTERVAL = 10 * 60 * 1000;
+
+// Current weather data
+let weatherData = null;
+
+// Temperature unit
+let currentUnit = "C";
+
+// Weather descriptions and icons
+const weatherCodes = {
+
+    0: ["Clear Sky", "☀️"],
+    1: ["Mainly Clear", "🌤️"],
+    2: ["Partly Cloudy", "⛅"],
+    3: ["Overcast", "☁️"],
+
+    45: ["Foggy", "🌫️"],
+    48: ["Rime Fog", "🌫️"],
+
+    51: ["Light Drizzle", "🌦️"],
+    53: ["Moderate Drizzle", "🌦️"],
+    55: ["Heavy Drizzle", "🌧️"],
+
+    56: ["Freezing Drizzle", "🌧️"],
+    57: ["Heavy Freezing Drizzle", "🌧️"],
+
+    61: ["Slight Rain", "🌧️"],
+    63: ["Moderate Rain", "🌧️"],
+    65: ["Heavy Rain", "🌧️"],
+
+    66: ["Freezing Rain", "🌧️"],
+    67: ["Heavy Freezing Rain", "🌧️"],
+
+    71: ["Slight Snow", "🌨️"],
+    73: ["Moderate Snow", "❄️"],
+    75: ["Heavy Snow", "❄️"],
+    77: ["Snow Grains", "❄️"],
+
+    80: ["Rain Showers", "🌦️"],
+    81: ["Moderate Showers", "🌧️"],
+    82: ["Violent Showers", "⛈️"],
+
+    85: ["Snow Showers", "🌨️"],
+    86: ["Heavy Snow Showers", "❄️"],
+
+    95: ["Thunderstorm", "⛈️"],
+    96: ["Thunderstorm with Hail", "⛈️"],
+    99: ["Severe Thunderstorm", "⛈️"]
+
+};
+
+
+// Get weather description
+function getWeather(code) {
+    return weatherCodes[code] || ["Unknown Conditions", "🌡️"];
+}
+
+
+// Temperature conversion
+function convertTemperature(value) {
+
+    if (currentUnit === "F") {
+        return (value * 9 / 5) + 32;
+    }
+
+    return value;
+}
+
+
+// Format temperature
+function formatTemperature(value) {
+
+    return Math.round(convertTemperature(value)) + "°";
+
+}
+
+
+// Format time in New York timezone
+function formatTime(value) {
+
+    if (!value) return "--:--";
+
+    const date = new Date(value);
+
+    return date.toLocaleTimeString("en-US", {
+        timeZone: "America/New_York",
+        hour: "numeric",
+        minute: "2-digit"
+    });
+
+}
+
+
+// Display today's date in New York
+function displayDate() {
+
+    const now = new Date();
+
+    document.getElementById("todayDate").textContent =
+        now.toLocaleDateString("en-US", {
+            timeZone: "America/New_York",
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+        });
+
+}
+
+
+// Fetch weather data
+async function loadWeather() {
+
+    const loading = document.getElementById("loading");
+    const error = document.getElementById("error");
+    const content = document.getElementById("weatherContent");
+    const status = document.getElementById("status");
+
+    loading.style.display = "block";
+    error.style.display = "none";
+
+    status.innerHTML = "● Connecting to live weather service...";
+
+    const url =
+        "https://api.open-meteo.com/v1/forecast" +
+        "?latitude=" + LATITUDE +
+        "&longitude=" + LONGITUDE +
+        "&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m" +
+        "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max,sunrise,sunset" +
+        "&timezone=America%2FNew_York" +
+        "&forecast_days=6";
+
+    try {
+
+        const response = await fetch(url, {
+            cache: "no-store"
+        });
+
+        if (!response.ok) {
+            throw new Error("Weather service returned an error.");
+        }
+
+        const data = await response.json();
+
+        if (!data.current || !data.daily) {
+            throw new Error("Weather data is incomplete.");
+        }
+
+        weatherData = data;
+
+        renderWeather();
+
+        loading.style.display = "none";
+        error.style.display = "none";
+        content.style.display = "block";
+
+        const updateTime = new Date().toLocaleTimeString(
+            "en-US",
+            {
+                timeZone: "America/New_York",
+                hour: "numeric",
+                minute: "2-digit"
+            }
+        );
+
+        status.innerHTML =
+            "<span>●</span> Live weather connection active.";
+
+        document.getElementById("updated").textContent =
+            "Last refreshed: " + updateTime + " New York time";
+
+    }
+
+    catch (err) {
+
+        loading.style.display = "none";
+
+        error.style.display = "block";
+
+        error.textContent =
+            "Unable to retrieve live weather. Please check your internet connection and try again.";
+
+        status.innerHTML =
+            "● Weather update unsuccessful. Retrying automatically.";
+
+        console.error("Weather error:", err);
+
+    }
+
+}
+
+
+// Render weather information
+function renderWeather() {
+
+    if (!weatherData) return;
+
+    const current = weatherData.current;
+    const daily = weatherData.daily;
+
+    const weather = getWeather(current.weather_code);
+
+    // Current conditions
+    document.getElementById("temperature").textContent =
+        formatTemperature(current.temperature_2m);
+
+    document.getElementById("feelsLike").textContent =
+        "Feels like " + formatTemperature(current.apparent_temperature);
+
+    document.getElementById("condition").textContent =
+        weather[0];
+
+    document.getElementById("weatherIcon").textContent =
+        weather[1];
+
+    // Weather details
+    document.getElementById("humidity").textContent =
+        current.relative_humidity_2m + "%";
+
+    document.getElementById("wind").textContent =
+        Math.round(current.wind_speed_10m) + " km/h";
+
+    document.getElementById("rain").textContent =
+        current.precipitation + " mm";
+
+    document.getElementById("uv").textContent =
+        daily.uv_index_max[0] ?? "--";
+
+    // Sunrise and sunset
+    document.getElementById("sunrise").textContent =
+        formatTime(daily.sunrise[0]);
+
+    document.getElementById("sunset").textContent =
+        formatTime(daily.sunset[0]);
+
+    // Five-day forecast
+    renderForecast();
+
+}
+
+
+// Render five future days
+function renderForecast() {
+
+    const daily = weatherData.daily;
+
+    const forecastContainer =
+        document.getElementById("forecast");
+
+    forecastContainer.innerHTML = "";
+
+    // Start at index 1 to show the next five days
+    for (let i = 1; i <= 5; i++) {
+
+        const weather = getWeather(daily.weather_code[i]);
+
+        const date = new Date(
+            daily.time[i] + "T12:00:00"
+        );
+
+        const dayName = date.toLocaleDateString(
+            "en-US",
+            {
+                weekday: "short"
+            }
+        );
+
+        const maxTemp =
+            formatTemperature(daily.temperature_2m_max[i]);
+
+        const minTemp =
+            formatTemperature(daily.temperature_2m_min[i]);
+
+        const rainChance =
+            daily.precipitation_probability_max[i];
+
+        const card = document.createElement("div");
+
+        card.className = "forecast-day";
+
+        card.innerHTML = `
+            <div class="day-name">${dayName}</div>
+
+            <div class="day-icon">${weather[1]}</div>
+
+            <div class="day-condition">${weather[0]}</div>
+
+            <div class="day-temps">
+                ${maxTemp}
+                <span class="day-low">${minTemp}</span>
+            </div>
+
+            <div class="rain-chance">
+                💧 ${rainChance ?? "--"}% rain
+            </div>
+        `;
+
+        forecastContainer.appendChild(card);
+
+    }
+
+}
+
+
+// Switch between Celsius and Fahrenheit
+function toggleUnit() {
+
+    currentUnit = currentUnit === "C" ? "F" : "C";
+
+    document.getElementById("unitBtn").textContent =
+        currentUnit === "C" ? "°C / °F" : "°F / °C";
+
+    renderWeather();
+
+}
+
+
+// Initialize application
+function initializeApp() {
+
+    document.getElementById("year").textContent =
+        new Date().getFullYear();
+
+    displayDate();
+
+    loadWeather();
+
+    // Automatically refresh weather every 10 minutes
+    setInterval(loadWeather, REFRESH_INTERVAL);
+
+    // Update the displayed date periodically
+    setInterval(displayDate, 60 * 1000);
+
+}
+
+
+// Start application
+initializeApp();
+
+</script>
+
+</body>
+</html>
