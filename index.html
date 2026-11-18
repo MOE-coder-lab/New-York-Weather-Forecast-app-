@@ -1,0 +1,1460 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101a39">
+<meta name="description" content="ATMOSPHERE is a global weather intelligence platform featuring live weather, international city search, five-day forecasts, severe-weather indicators and historical climate information.">
+<title>ATMOSPHERE | Global Weather Intelligence</title>
+
+<style>
+:root {
+  --bg:#091225;
+  --panel:#121f3c;
+  --panel2:#19294b;
+  --text:#f4f7ff;
+  --muted:#aab8d3;
+  --purple:#a78bfa;
+  --blue:#60a5fa;
+  --cyan:#67e8f9;
+  --pink:#f472b6;
+  --orange:#fbbf24;
+  --green:#34d399;
+  --red:#fb7185;
+  --border:rgba(255,255,255,.11);
+  --radius:20px;
+}
+
+* { box-sizing:border-box; }
+
+html { scroll-behavior:smooth; }
+
+body {
+  margin:0;
+  background:
+    radial-gradient(ellipse at 10% 0%,rgba(91,74,190,.22),transparent 36%),
+    radial-gradient(ellipse at 90% 15%,rgba(30,144,200,.16),transparent 35%),
+    var(--bg);
+  color:var(--text);
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  line-height:1.6;
+}
+
+button,input,select { font:inherit; }
+button { cursor:pointer; }
+button:focus-visible,input:focus-visible,select:focus-visible {
+  outline:3px solid var(--cyan);
+  outline-offset:3px;
+}
+
+a { color:var(--cyan); }
+
+.container {
+  width:min(1180px,92%);
+  margin:auto;
+}
+
+header {
+  position:sticky;
+  top:0;
+  z-index:20;
+  background:rgba(9,18,37,.92);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+}
+
+.nav {
+  min-height:76px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+}
+
+.brand {
+  display:flex;
+  align-items:center;
+  gap:11px;
+  font-size:20px;
+  font-weight:900;
+  letter-spacing:1.5px;
+}
+
+.brand-icon {
+  width:43px;
+  height:43px;
+  display:grid;
+  place-items:center;
+  border-radius:14px;
+  background:linear-gradient(135deg,#8b5cf6,#2563eb);
+  font-size:24px;
+}
+
+.nav-links {
+  display:flex;
+  gap:20px;
+  align-items:center;
+}
+
+.nav-links a {
+  color:var(--muted);
+  text-decoration:none;
+  font-size:13px;
+}
+
+.nav-links a:hover { color:white; }
+
+.hero {
+  padding:45px 0 24px;
+}
+
+.eyebrow {
+  color:var(--cyan);
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:2px;
+  text-transform:uppercase;
+}
+
+h1 {
+  font-size:clamp(32px,6vw,58px);
+  line-height:1.08;
+  margin:10px 0;
+  letter-spacing:-2px;
+}
+
+.gradient {
+  background:linear-gradient(90deg,#67e8f9,#a78bfa,#f472b6);
+  background-clip:text;
+  -webkit-background-clip:text;
+  color:transparent;
+}
+
+.subtitle {
+  color:var(--muted);
+  max-width:650px;
+  font-size:15px;
+}
+
+.panel {
+  background:linear-gradient(145deg,rgba(25,41,75,.96),rgba(16,29,55,.96));
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:23px;
+  box-shadow:0 15px 45px rgba(0,0,0,.15);
+  min-width:0;
+}
+
+.search-panel { margin-top:18px; }
+
+.search-row {
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.search-row input {
+  flex:1;
+  min-width:180px;
+}
+
+input,select {
+  color:var(--text);
+  background:#0b1730;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:13px 14px;
+  min-width:0;
+}
+
+input::placeholder { color:#8292b1; }
+
+.btn {
+  border:0;
+  padding:12px 18px;
+  border-radius:12px;
+  font-weight:800;
+  color:white;
+  background:linear-gradient(120deg,#7c3aed,#2563eb);
+  transition:transform .2s,filter .2s;
+}
+
+.btn:hover { transform:translateY(-2px); filter:brightness(1.15); }
+
+.btn.secondary {
+  background:#26395f;
+  border:1px solid var(--border);
+}
+
+.btn.small { padding:9px 13px; font-size:12px; }
+
+.search-help {
+  color:var(--muted);
+  font-size:12px;
+  margin-top:10px;
+}
+
+.status {
+  margin-top:15px;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.status.error { color:#fda4af; }
+.status.success { color:#6ee7b7; }
+
+.section-title {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin:34px 0 15px;
+}
+
+.section-title h2 {
+  font-size:21px;
+  margin:0;
+}
+
+.section-title p {
+  color:var(--muted);
+  font-size:12px;
+  margin:3px 0 0;
+}
+
+.weather-hero {
+  position:relative;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 85% 20%,rgba(167,139,250,.28),transparent 35%),
+    linear-gradient(120deg,#172c55,#25205b);
+  padding:28px;
+  border:1px solid rgba(167,139,250,.25);
+  border-radius:24px;
+}
+
+.weather-hero:after {
+  content:"";
+  position:absolute;
+  width:220px;
+  height:220px;
+  right:-85px;
+  bottom:-135px;
+  border-radius:50%;
+  border:35px solid rgba(255,255,255,.04);
+}
+
+.weather-main {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:20px;
+}
+
+.location-name {
+  font-size:24px;
+  font-weight:850;
+}
+
+.date-label { color:#c3cce3; font-size:13px; }
+
+.temperature {
+  font-size:clamp(64px,12vw,105px);
+  font-weight:850;
+  letter-spacing:-6px;
+  line-height:1.2;
+}
+
+.weather-icon {
+  font-size:76px;
+  filter:drop-shadow(0 8px 18px rgba(0,0,0,.25));
+}
+
+.condition {
+  font-size:18px;
+  font-weight:700;
+}
+
+.feels { color:#d4dff4; font-size:13px; }
+
+.unit-toggle {
+  display:flex;
+  gap:5px;
+  background:rgba(0,0,0,.2);
+  padding:5px;
+  border-radius:10px;
+}
+
+.unit-toggle button {
+  border:0;
+  background:transparent;
+  color:white;
+  padding:6px 12px;
+  border-radius:7px;
+}
+
+.unit-toggle button.active {
+  background:#8b5cf6;
+}
+
+.metrics {
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:13px;
+  margin-top:18px;
+}
+
+.metric {
+  background:rgba(9,18,37,.55);
+  border:1px solid var(--border);
+  border-radius:15px;
+  padding:16px;
+}
+
+.metric-icon { font-size:22px; }
+.metric-label { color:var(--muted); font-size:12px; margin-top:8px; }
+.metric-value { font-size:19px; font-weight:800; }
+
+.alert {
+  border:1px solid rgba(251,113,133,.5);
+  background:rgba(127,29,29,.25);
+  border-radius:14px;
+  padding:16px;
+  margin-top:17px;
+  color:#fecdd3;
+}
+
+.alert.safe {
+  border-color:rgba(52,211,153,.35);
+  background:rgba(6,78,59,.2);
+  color:#a7f3d0;
+}
+
+.alert strong { display:block; margin-bottom:4px; }
+
+.forecast-grid {
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:12px;
+}
+
+.day {
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:16px 10px;
+  text-align:center;
+}
+
+.day-name { font-size:13px; font-weight:800; }
+.day-icon { font-size:31px; margin:12px 0; }
+.day-condition { color:var(--muted); font-size:11px; min-height:34px; }
+.day-temp { font-weight:850; margin-top:8px; }
+.day-rain { color:var(--cyan); font-size:11px; margin-top:5px; }
+
+.two-column {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:17px;
+}
+
+.chart {
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-around;
+  height:170px;
+  gap:9px;
+  padding-top:15px;
+  border-bottom:1px solid var(--border);
+}
+
+.chart-item {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-end;
+  height:100%;
+  flex:1;
+  gap:7px;
+  min-width:0;
+}
+
+.chart-bar {
+  width:min(35px,75%);
+  min-height:5px;
+  border-radius:9px 9px 3px 3px;
+  background:linear-gradient(180deg,#67e8f9,#8b5cf6);
+}
+
+.chart-item small { color:var(--muted); font-size:10px; }
+.chart-item strong { font-size:11px; }
+
+.historical-controls {
+  display:grid;
+  grid-template-columns:1fr 1fr auto;
+  gap:10px;
+  align-items:end;
+}
+
+.field label {
+  display:block;
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:6px;
+}
+
+.history-summary {
+  margin-top:17px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+
+.history-stat {
+  padding:14px;
+  background:#0b1730;
+  border:1px solid var(--border);
+  border-radius:13px;
+}
+
+.history-stat strong { display:block; font-size:21px; }
+.history-stat span { color:var(--muted); font-size:11px; }
+
+.history-list {
+  margin-top:14px;
+  max-height:300px;
+  overflow:auto;
+}
+
+.history-row {
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  padding:11px 5px;
+  border-bottom:1px solid var(--border);
+  font-size:12px;
+}
+
+.history-row span:last-child { color:var(--cyan); }
+
+.monitor {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+
+.monitor-item {
+  background:#0b1730;
+  border:1px solid var(--border);
+  border-radius:13px;
+  padding:15px;
+  min-width:0;
+}
+
+.monitor-item span { display:block; color:var(--muted); font-size:11px; }
+.monitor-item strong { display:block; margin-top:5px; font-size:13px; overflow-wrap:anywhere; }
+
+.feature-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+}
+
+.feature {
+  padding:18px;
+  border:1px solid var(--border);
+  background:rgba(25,41,75,.7);
+  border-radius:16px;
+}
+
+.feature-icon { font-size:26px; }
+.feature h3 { font-size:14px; margin:10px 0 5px; }
+.feature p { color:var(--muted); font-size:12px; margin:0; }
+
+footer {
+  border-top:1px solid var(--border);
+  margin-top:55px;
+  padding:30px 0;
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.hidden { display:none!important; }
+
+@media(max-width:750px) {
+  .nav-links { display:none; }
+  .metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .forecast-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .forecast-grid .day:last-child { grid-column:span 2; }
+  .two-column { grid-template-columns:1fr; }
+  .feature-grid { grid-template-columns:repeat(2,1fr); }
+  .monitor { grid-template-columns:1fr 1fr; }
+}
+
+@media(max-width:430px) {
+  .panel { padding:16px; }
+  .weather-hero { padding:19px; }
+  .feature-grid { grid-template-columns:1fr; }
+  .historical-controls { grid-template-columns:1fr; }
+  .history-summary { grid-template-columns:1fr; }
+  .temperature { font-size:69px; }
+  .weather-icon { font-size:58px; }
+  .location-name { font-size:20px; }
+  .search-row .btn { width:100%; }
+}
+
+@media(prefers-reduced-motion:reduce) {
+  *,*::before,*::after {
+    scroll-behavior:auto!important;
+    transition:none!important;
+    animation:none!important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="container nav">
+    <div class="brand">
+      <div class="brand-icon" aria-hidden="true">☀️</div>
+      ATMOSPHERE
+    </div>
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="#current">Live Weather</a>
+      <a href="#forecast">Forecast</a>
+      <a href="#history">History</a>
+      <a href="#about">About</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+
+<section class="hero">
+  <div class="eyebrow">GLOBAL WEATHER INTELLIGENCE</div>
+  <h1>Weather, <span class="gradient">understood.</span></h1>
+  <p class="subtitle">
+    Explore real-time weather conditions, global city forecasts,
+    weather warnings and historical climate patterns.
+    Powered by Open-Meteo.
+  </p>
+
+  <div class="panel search-panel">
+    <form id="searchForm" class="search-row">
+      <input
+        id="cityInput"
+        type="search"
+        placeholder="Search any city worldwide..."
+        aria-label="Search for a city"
+        value="New York"
+        required
+        autocomplete="off"
+      >
+      <button class="btn" type="submit" id="searchButton">
+        Search City
+      </button>
+      <button class="btn secondary" type="button" id="refreshButton">
+        ↻ Refresh
+      </button>
+    </form>
+    <div class="search-help">
+      Examples: Lagos, London, Tokyo, New York, Akure, Paris, Toronto.
+    </div>
+    <div id="searchStatus" class="status" role="status" aria-live="polite">
+      Preparing weather information...
+    </div>
+  </div>
+</section>
+
+<section id="current">
+  <div class="section-title">
+    <div>
+      <h2>Current Conditions</h2>
+      <p>Live weather information for your selected city.</p>
+    </div>
+    <div class="unit-toggle" aria-label="Temperature unit">
+      <button type="button" class="active" id="celsiusButton" aria-pressed="true">°C</button>
+      <button type="button" id="fahrenheitButton" aria-pressed="false">°F</button>
+    </div>
+  </div>
+
+  <div class="weather-hero">
+    <div class="weather-main">
+      <div>
+        <div class="eyebrow">YOUR WEATHER LOCATION</div>
+        <div class="location-name" id="locationName">New York, United States</div>
+        <div class="date-label" id="currentDate">Loading local date...</div>
+        <div class="temperature" id="temperature" aria-live="polite">--°</div>
+        <div class="condition" id="condition">Loading conditions...</div>
+        <div class="feels" id="feelsLike">Feels like --°</div>
+      </div>
+      <div class="weather-icon" id="weatherIcon" role="img" aria-label="Weather icon">🌤️</div>
+    </div>
+  </div>
+
+  <div id="weatherAlert" class="alert safe" role="status" aria-live="polite">
+    <strong>Weather monitoring</strong>
+    Checking available weather conditions...
+  </div>
+
+  <div class="metrics" aria-label="Weather measurements">
+    <div class="metric">
+      <div class="metric-icon" aria-hidden="true">💧</div>
+      <div class="metric-label">Humidity</div>
+      <div class="metric-value" id="humidity">--%</div>
+    </div>
+    <div class="metric">
+      <div class="metric-icon" aria-hidden="true">💨</div>
+      <div class="metric-label">Wind Speed</div>
+      <div class="metric-value" id="wind">-- km/h</div>
+    </div>
+    <div class="metric">
+      <div class="metric-icon" aria-hidden="true">🌧️</div>
+      <div class="metric-label">Precipitation</div>
+      <div class="metric-value" id="precipitation">-- mm</div>
+    </div>
+    <div class="metric">
+      <div class="metric-icon" aria-hidden="true">☀️</div>
+      <div class="metric-label">UV Index</div>
+      <div class="metric-value" id="uv">--</div>
+    </div>
+    <div class="metric">
+      <div class="metric-icon" aria-hidden="true">🌅</div>
+      <div class="metric-label">Sunrise</div>
+      <div class="metric-value" id="sunrise">--</div>
+    </div>
+    <div class="metric">
+      <div class="metric-icon" aria-hidden="true">🌇</div>
+      <div class="metric-label">Sunset</div>
+      <div class="metric-value" id="sunset">--</div>
+    </div>
+    <div class="metric">
+      <div class="metric-icon" aria-hidden="true">🌬️</div>
+      <div class="metric-label">Wind Gusts</div>
+      <div class="metric-value" id="gusts">-- km/h</div>
+    </div>
+    <div class="metric">
+      <div class="metric-icon" aria-hidden="true">🌡️</div>
+      <div class="metric-label">Pressure</div>
+      <div class="metric-value" id="pressure">-- hPa</div>
+    </div>
+  </div>
+</section>
+
+<section id="forecast">
+  <div class="section-title">
+    <div>
+      <h2>Five-Day Forecast</h2>
+      <p>Explore upcoming weather conditions.</p>
+    </div>
+  </div>
+
+  <div id="forecastGrid" class="forecast-grid" aria-live="polite">
+    <div class="day">Loading forecast...</div>
+  </div>
+
+  <div class="section-title">
+    <div>
+      <h2>Temperature Outlook</h2>
+      <p>Daily maximum temperatures over the forecast period.</p>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div id="temperatureChart" class="chart" aria-label="Five-day temperature chart">
+      Loading chart...
+    </div>
+  </div>
+</section>
+
+<section id="history">
+  <div class="section-title">
+    <div>
+      <h2>Historical Weather Explorer</h2>
+      <p>Explore previous weather records and seasonal patterns.</p>
+    </div>
+  </div>
+
+  <div class="panel">
+    <p class="subtitle">
+      Select a date range to retrieve actual historical weather records
+      for your selected location.
+    </p>
+
+    <div class="historical-controls">
+      <div class="field">
+        <label for="historyStart">Start date</label>
+        <input type="date" id="historyStart">
+      </div>
+      <div class="field">
+        <label for="historyEnd">End date</label>
+        <input type="date" id="historyEnd">
+      </div>
+      <button type="button" class="btn" id="historyButton">
+        Explore History
+      </button>
+    </div>
+
+    <div id="historyStatus" class="status" role="status" aria-live="polite">
+      Choose a historical date range.
+    </div>
+
+    <div id="historyResults" class="hidden">
+      <div class="history-summary">
+        <div class="history-stat">
+          <strong id="historyAverage">--°</strong>
+          <span>Average temperature</span>
+        </div>
+        <div class="history-stat">
+          <strong id="historyMaximum">--°</strong>
+          <span>Highest daily maximum</span>
+        </div>
+        <div class="history-stat">
+          <strong id="historyRain">-- mm</strong>
+          <span>Total precipitation</span>
+        </div>
+      </div>
+
+      <div class="chart" id="historyChart" aria-label="Historical temperature chart"></div>
+      <div class="history-list" id="historyList"></div>
+    </div>
+  </div>
+</section>
+
+<section id="monitoring">
+  <div class="section-title">
+    <div>
+      <h2>System & API Monitoring</h2>
+      <p>Transparency about data retrieval and application health.</p>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="monitor">
+      <div class="monitor-item">
+        <span>Weather API</span>
+        <strong id="apiStatus">Connecting...</strong>
+      </div>
+      <div class="monitor-item">
+        <span>Last successful update</span>
+        <strong id="lastUpdate">Not yet updated</strong>
+      </div>
+      <div class="monitor-item">
+        <span>Failed requests</span>
+        <strong id="failedRequests">0</strong>
+      </div>
+      <div class="monitor-item">
+        <span>Selected location</span>
+        <strong id="monitorLocation">New York</strong>
+      </div>
+      <div class="monitor-item">
+        <span>Data source</span>
+        <strong>Open-Meteo</strong>
+      </div>
+      <div class="monitor-item">
+        <span>Connection</span>
+        <strong id="connectionStatus">Checking...</strong>
+      </div>
+    </div>
+
+    <div class="status" id="apiMessage" role="status" aria-live="polite">
+      Initializing API monitoring...
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="section-title">
+    <div>
+      <h2>Built for better weather awareness</h2>
+      <p>Technology, usability and accessible information.</p>
+    </div>
+  </div>
+
+  <div class="feature-grid">
+    <article class="feature">
+      <div class="feature-icon">🌍</div>
+      <h3>Multiple-city search</h3>
+      <p>Explore weather conditions in cities around the world.</p>
+    </article>
+
+    <article class="feature">
+      <div class="feature-icon">⚠️</div>
+      <h3>Severe-weather warnings</h3>
+      <p>Display severe-weather warnings when supported data is available.</p>
+    </article>
+
+    <article class="feature">
+      <div class="feature-icon">📊</div>
+      <h3>Historical weather information</h3>
+      <p>Allow users to explore previous weather records and seasonal patterns.</p>
+    </article>
+
+    <article class="feature">
+      <div class="feature-icon">📱</div>
+      <h3>Mobile responsiveness testing</h3>
+      <p>Responsive layouts designed for phones, tablets and desktop screens.</p>
+    </article>
+
+    <article class="feature">
+      <div class="feature-icon">♿</div>
+      <h3>Accessibility improvements</h3>
+      <p>Keyboard navigation, readable contrast, labels and screen-reader status updates.</p>
+    </article>
+
+    <article class="feature">
+      <div class="feature-icon">🧪</div>
+      <h3>Automated testing</h3>
+      <p>Built-in JavaScript checks for important application functions.</p>
+    </article>
+
+    <article class="feature">
+      <div class="feature-icon">🔍</div>
+      <h3>Weather API error monitoring</h3>
+      <p>Helps diagnose failed requests and monitor service availability.</p>
+    </article>
+
+    <article class="feature">
+      <div class="feature-icon">🕒</div>
+      <h3>Last successful update time</h3>
+      <p>Builds user confidence by showing when the latest data was retrieved.</p>
+    </article>
+
+    <article class="feature">
+      <div class="feature-icon">🌡️</div>
+      <h3>International weather insights</h3>
+      <p>Live conditions, forecast information and historical observations.</p>
+    </article>
+  </div>
+</section>
+
+<section id="testing">
+  <div class="section-title">
+    <div>
+      <h2>Application Quality Tests</h2>
+      <p>Run built-in automated JavaScript checks.</p>
+    </div>
+    <button class="btn small" id="testButton" type="button">Run Tests</button>
+  </div>
+
+  <div class="panel">
+    <div id="testStatus" class="status" role="status" aria-live="polite">
+      Automated tests have not been run yet.
+    </div>
+    <div id="testResults"></div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="container">
+    <div class="brand" style="justify-content:center">
+      <span aria-hidden="true">☀️</span> ATMOSPHERE
+    </div>
+    <p>Global Weather Intelligence Platform</p>
+    <p>Weather data provided by
+      <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a>.
+    </p>
+    <p>Weather forecasts are estimates and should not replace official emergency alerts.</p>
+    <p>Designed and developed as an independent web development portfolio project.</p>
+    <p>© <span id="year"></span> ATMOSPHERE. All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+"use strict";
+
+/* =====================================
+   ATMOSPHERE WEATHER APPLICATION
+   ===================================== */
+
+const API = {
+  geocoding: "https://geocoding-api.open-meteo.com/v1/search",
+  forecast: "https://api.open-meteo.com/v1/forecast",
+  archive: "https://archive-api.open-meteo.com/v1/archive"
+};
+
+const state = {
+  location: {
+    name: "New York",
+    country: "United States",
+    latitude: 40.7128,
+    longitude: -74.006,
+    timezone: "America/New_York"
+  },
+  weather: null,
+  unit: "C",
+  failedRequests: 0,
+  lastUpdate: null,
+  loading: false
+};
+
+const $ = id => document.getElementById(id);
+
+const safeNumber = (value, digits = 1) =>
+  Number.isFinite(Number(value)) ? Number(value).toFixed(digits) : "--";
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  })[char]);
+}
+
+function setStatus(id, message, type = "") {
+  const el = $(id);
+  el.textContent = message;
+  el.className = "status " + type;
+}
+
+function toFahrenheit(c) {
+  return (Number(c) * 9 / 5) + 32;
+}
+
+function displayTemp(c) {
+  if (!Number.isFinite(Number(c))) return "--°";
+  const value = state.unit === "C" ? Number(c) : toFahrenheit(c);
+  return Math.round(value) + "°";
+}
+
+function dateLabel(date) {
+  return new Date(date).toLocaleDateString(undefined, {
+    weekday:"long",
+    year:"numeric",
+    month:"long",
+    day:"numeric"
+  });
+}
+
+function timeLabel(value) {
+  if (!value) return "--";
+  return value.slice(11,16);
+}
+
+function weatherDescription(code) {
+  const codes = {
+    0:["Clear sky","☀️"],
+    1:["Mainly clear","🌤️"],
+    2:["Partly cloudy","⛅"],
+    3:["Overcast","☁️"],
+    45:["Fog","🌫️"],
+    48:["Depositing rime fog","🌫️"],
+    51:["Light drizzle","🌦️"],
+    53:["Moderate drizzle","🌦️"],
+    55:["Dense drizzle","🌧️"],
+    56:["Light freezing drizzle","🌧️"],
+    57:["Dense freezing drizzle","🌧️"],
+    61:["Slight rain","🌦️"],
+    63:["Moderate rain","🌧️"],
+    65:["Heavy rain","🌧️"],
+    66:["Light freezing rain","🌧️"],
+    67:["Heavy freezing rain","🌧️"],
+    71:["Slight snowfall","🌨️"],
+    73:["Moderate snowfall","🌨️"],
+    75:["Heavy snowfall","❄️"],
+    77:["Snow grains","🌨️"],
+    80:["Slight rain showers","🌦️"],
+    81:["Moderate rain showers","🌧️"],
+    82:["Violent rain showers","⛈️"],
+    85:["Slight snow showers","🌨️"],
+    86:["Heavy snow showers","❄️"],
+    95:["Thunderstorm","⛈️"],
+    96:["Thunderstorm with hail","⛈️"],
+    99:["Thunderstorm with heavy hail","⛈️"]
+  };
+  return codes[code] || ["Weather conditions unavailable","🌡️"];
+}
+
+async function fetchJSON(url) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
+
+  try {
+    const response = await fetch(url, {
+      signal:controller.signal,
+      headers:{"Accept":"application/json"}
+    });
+
+    if (!response.ok) {
+      throw new Error("HTTP " + response.status);
+    }
+
+    const data = await response.json();
+
+    if (data.error) {
+      throw new Error(data.reason || "Weather service error");
+    }
+
+    return data;
+  } catch (error) {
+    state.failedRequests++;
+    $("failedRequests").textContent = state.failedRequests;
+    $("apiStatus").textContent = "Request error";
+    $("apiMessage").textContent = error.name === "AbortError"
+      ? "Request timed out. Check your connection and try again."
+      : "Weather API error: " + error.message;
+    throw error;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+function buildForecastURL() {
+  const p = new URLSearchParams({
+    latitude:state.location.latitude,
+    longitude:state.location.longitude,
+    current:"temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,surface_pressure",
+    hourly:"temperature_2m,precipitation_probability,weather_code",
+    daily:"weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max,precipitation_sum,precipitation_probability_max",
+    timezone:state.location.timezone || "auto",
+    forecast_days:"5"
+  });
+
+  return API.forecast + "?" + p;
+}
+
+async function searchCity(query) {
+  if (!query.trim()) throw new Error("Please enter a city name.");
+
+  const url = API.geocoding + "?" + new URLSearchParams({
+    name:query.trim(),
+    count:"10",
+    language:"en",
+    format:"json"
+  });
+
+  const data = await fetchJSON(url);
+
+  if (!data.results || !data.results.length) {
+    throw new Error("No matching city found. Try another spelling.");
+  }
+
+  return data.results;
+}
+
+function chooseLocation(place) {
+  state.location = {
+    name:place.name,
+    country:place.country || "",
+    latitude:place.latitude,
+    longitude:place.longitude,
+    timezone:place.timezone || "auto"
+  };
+}
+
+async function loadWeather() {
+  if (state.loading) return;
+
+  state.loading = true;
+  $("refreshButton").disabled = true;
+  $("searchButton").disabled = true;
+  setStatus("searchStatus","Retrieving live weather information...");
+
+  try {
+    const data = await fetchJSON(buildForecastURL());
+
+    if (!data.current || !data.daily) {
+      throw new Error("The weather provider returned incomplete data.");
+    }
+
+    state.weather = data;
+    state.lastUpdate = new Date();
+
+    renderWeather();
+    renderForecast();
+    renderAlerts();
+
+    $("apiStatus").textContent = "Operational";
+    $("apiMessage").textContent =
+      "Weather information successfully retrieved from Open-Meteo.";
+    $("lastUpdate").textContent = state.lastUpdate.toLocaleString();
+    $("monitorLocation").textContent = state.location.name;
+    $("connectionStatus").textContent = navigator.onLine
+      ? "Online"
+      : "Offline";
+
+    setStatus("searchStatus","Weather successfully updated.","success");
+  } catch (error) {
+    setStatus("searchStatus",error.message,"error");
+  } finally {
+    state.loading = false;
+    $("refreshButton").disabled = false;
+    $("searchButton").disabled = false;
+  }
+}
+
+function renderWeather() {
+  const data = state.weather;
+  const current = data.current;
+  const daily = data.daily;
+  const [description,icon] = weatherDescription(current.weather_code);
+
+  $("locationName").textContent =
+    state.location.name + (state.location.country ? ", " + state.location.country : "");
+
+  $("currentDate").textContent =
+    dateLabel(current.time.slice(0,10));
+
+  $("temperature").textContent = displayTemp(current.temperature_2m);
+  $("condition").textContent = description;
+  $("weatherIcon").textContent = icon;
+  $("weatherIcon").setAttribute("aria-label",description);
+
+  $("feelsLike").textContent =
+    "Feels like " + displayTemp(current.apparent_temperature);
+
+  $("humidity").textContent = safeNumber(current.relative_humidity_2m,0) + "%";
+  $("wind").textContent = safeNumber(current.wind_speed_10m) + " km/h";
+  $("precipitation").textContent = safeNumber(current.precipitation) + " mm";
+  $("uv").textContent = safeNumber(daily.uv_index_max?.[0]);
+  $("sunrise").textContent = timeLabel(daily.sunrise?.[0]);
+  $("sunset").textContent = timeLabel(daily.sunset?.[0]);
+  $("gusts").textContent = safeNumber(current.wind_gusts_10m) + " km/h";
+  $("pressure").textContent = safeNumber(current.surface_pressure,0) + " hPa";
+  $("monitorLocation").textContent = state.location.name;
+}
+
+function renderForecast() {
+  const daily = state.weather.daily;
+  const grid = $("forecastGrid");
+
+  grid.innerHTML = daily.time.map((date,index) => {
+    const [description,icon] = weatherDescription(daily.weather_code[index]);
+    const rain = daily.precipitation_probability_max?.[index];
+
+    return `
+      <article class="day">
+        <div class="day-name">${escapeHTML(
+          new Date(date + "T12:00:00").toLocaleDateString(undefined,{weekday:"short"})
+        )}</div>
+        <div class="day-icon" aria-hidden="true">${icon}</div>
+        <div class="day-condition">${escapeHTML(description)}</div>
+        <div class="day-temp">
+          ${displayTemp(daily.temperature_2m_max[index])}
+          /
+          ${displayTemp(daily.temperature_2m_min[index])}
+        </div>
+        <div class="day-rain">Rain: ${Number.isFinite(rain) ? rain + "%" : "N/A"}</div>
+      </article>
+    `;
+  }).join("");
+
+  const values = daily.temperature_2m_max.map(Number);
+  const max = Math.max(...values);
+  const min = Math.min(...values);
+  const range = Math.max(max-min,1);
+
+  $("temperatureChart").innerHTML = values.map((value,index) => {
+    const height = 25 + ((value-min)/range)*100;
+    const date = new Date(daily.time[index] + "T12:00:00")
+      .toLocaleDateString(undefined,{weekday:"short"});
+
+    return `
+      <div class="chart-item">
+        <strong>${displayTemp(value)}</strong>
+        <div class="chart-bar" style="height:${height}px"></div>
+        <small>${escapeHTML(date)}</small>
+      </div>
+    `;
+  }).join("");
+}
+
+function renderAlerts() {
+  const current = state.weather.current;
+  const code = Number(current.weather_code);
+  const gust = Number(current.wind_gusts_10m);
+  const rain = Number(current.precipitation);
+  const warnings = [];
+
+  if ([95,96,99].includes(code)) {
+    warnings.push("Thunderstorm conditions are reported.");
+  }
+
+  if ([65,67,82].includes(code)) {
+    warnings.push("Heavy rain or intense showers are reported.");
+  }
+
+  if ([75,86].includes(code)) {
+    warnings.push("Heavy snowfall conditions are reported.");
+  }
+
+  if (gust >= 60) {
+    warnings.push("Strong wind gusts of " + Math.round(gust) + " km/h are reported.");
+  }
+
+  if (rain >= 10) {
+    warnings.push("Significant precipitation is currently reported.");
+  }
+
+  const alert = $("weatherAlert");
+
+  if (warnings.length) {
+    alert.className = "alert";
+    alert.innerHTML =
+      "<strong>⚠️ Weather condition warning</strong>" +
+      warnings.map(item => "<div>" + escapeHTML(item) + "</div>").join("") +
+      "<small>Condition-based notice only. Consult your local official meteorological agency for verified warnings and safety instructions.</small>";
+  } else {
+    alert.className = "alert safe";
+    alert.innerHTML =
+      "<strong>✓ No selected warning conditions detected</strong>" +
+      "<div>No configured severe-weather indicators were detected in the current readings. This does not guarantee safe conditions.</div>";
+  }
+}
+
+function setUnit(unit) {
+  state.unit = unit;
+
+  $("celsiusButton").classList.toggle("active",unit==="C");
+  $("fahrenheitButton").classList.toggle("active",unit==="F");
+
+  $("celsiusButton").setAttribute("aria-pressed",String(unit==="C"));
+  $("fahrenheitButton").setAttribute("aria-pressed",String(unit==="F"));
+
+  if (state.weather) {
+    renderWeather();
+    renderForecast();
+  }
+
+  if (!$("historyResults").classList.contains("hidden")) {
+    $("historyButton").click();
+  }
+}
+
+async function loadHistory() {
+  const start = $("historyStart").value;
+  const end = $("historyEnd").value;
+
+  if (!start || !end || start > end) {
+    setStatus("historyStatus","Please select a valid date range.","error");
+    return;
+  }
+
+  if (end >= new Date().toISOString().slice(0,10)) {
+    setStatus("historyStatus","Choose dates before today for completed historical records.","error");
+    return;
+  }
+
+  const days = (new Date(end + "T00:00:00") -
+    new Date(start + "T00:00:00")) / 86400000;
+
+  if (days > 366) {
+    setStatus("historyStatus","Please select a period of 366 days or less.","error");
+    return;
+  }
+
+  setStatus("historyStatus","Retrieving historical weather records...");
+
+  const params = new URLSearchParams({
+    latitude:state.location.latitude,
+    longitude:state.location.longitude,
+    start_date:start,
+    end_date:end,
+    daily:"temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code",
+    timezone:state.location.timezone || "auto"
+  });
+
+  try {
+    const data = await fetchJSON(API.archive + "?" + params);
+
+    const daily = data.daily;
+    if (!daily?.time?.length) {
+      throw new Error("No historical records were returned.");
+    }
+
+    const average =
+      daily.temperature_2m_max.reduce((a,b,i) =>
+        a + (Number(b)+Number(daily.temperature_2m_min[i]))/2,0
+      ) / daily.time.length;
+
+    const maximum = Math.max(...daily.temperature_2m_max.map(Number));
+    const totalRain = daily.precipitation_sum.reduce((a,b)=>a+Number(b||0),0);
+
+    $("historyAverage").textContent = displayTemp(average);
+    $("historyMaximum").textContent = displayTemp(maximum);
+    $("historyRain").textContent = safeNumber(totalRain) + " mm";
+
+    const values = daily.temperature_2m_max.map(Number);
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const range = Math.max(max-min,1);
+
+    $("historyChart").innerHTML = values.map((value,index) => {
+      const height = 20 + ((value-min)/range)*110;
+      return `
+        <div class="chart-item">
+          <strong>${displayTemp(value)}</strong>
+          <div class="chart-bar" style="height:${height}px"></div>
+          <small>${escapeHTML(daily.time[index].slice(5))}</small>
+        </div>
+      `;
+    }).join("");
+
+    $("historyList").innerHTML = daily.time.map((date,index) => {
+      const [description,icon] = weatherDescription(daily.weather_code[index]);
+      return `
+        <div class="history-row">
+          <span>${escapeHTML(date)} · ${icon} ${escapeHTML(description)}</span>
+          <span>${displayTemp(daily.temperature_2m_max[index])} / ${displayTemp(daily.temperature_2m_min[index])}</span>
+        </div>
+      `;
+    }).join("");
+
+    $("historyResults").classList.remove("hidden");
+    setStatus("historyStatus","Historical records retrieved successfully.","success");
+
+  } catch (error) {
+    setStatus("historyStatus",error.message,"error");
+  }
+}
+
+async function handleCitySearch(event) {
+  event.preventDefault();
+
+  const query = $("cityInput").value.trim();
+  setStatus("searchStatus","Searching global locations...");
+
+  try {
+    const results = await searchCity(query);
+
+    // Select the most relevant first geocoding result.
+    chooseLocation(results[0]);
+
+    $("cityInput").value = state.location.name;
+    $("historyResults").classList.add("hidden");
+
+    await loadWeather();
+  } catch (error) {
+    setStatus("searchStatus",error.message,"error");
+  }
+}
+
+function setDefaultHistoryDates() {
+  const today = new Date();
+  const end = new Date(today);
+  end.setDate(end.getDate()-1);
+
+  const start = new Date(end);
+  start.setDate(start.getDate()-6);
+
+  const format = date => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth()+1).padStart(2,"0");
+    const day = String(date.getDate()).padStart(2,"0");
+    return `${year}-${month}-${day}`;
+  };
+
+  $("historyStart").value = format(start);
+  $("historyEnd").value = format(end);
+}
+
+function runAutomatedTests() {
+  const tests = [
+    {
+      name:"Celsius to Fahrenheit conversion",
+      run:()=>Math.round(toFahrenheit(0))===32
+    },
+    {
+      name:"Temperature conversion at boiling point",
+      run:()=>Math.round(toFahrenheit(100))===212
+    },
+    {
+      name:"Weather code identification",
+      run:()=>weatherDescription(95)[0]==="Thunderstorm"
+    },
+    {
+      name:"Clear weather identification",
+      run:()=>weatherDescription(0)[0]==="Clear sky"
+    },
+    {
+      name:"Unknown weather code handling",
+      run:()=>weatherDescription(999)[0]==="Weather conditions unavailable"
+    },
+    {
+      name:"HTML escaping",
+      run:()=>escapeHTML("<script>").includes("&lt;")
+    },
+    {
+      name:"Valid numeric formatting",
+      run:()=>safeNumber(25.45)==="25.5"
+    },
+    {
+      name:"Missing numeric data handling",
+      run:()=>safeNumber(null)==="0.0" ? false : safeNumber(undefined)==="--"
+    }
+  ];
+
+  let passed = 0;
+
+  $("testResults").innerHTML = tests.map(test => {
+    let success = false;
+    try { success = Boolean(test.run()); } catch (_) {}
+
+    if (success) passed++;
+
+    return `
+      <div class="history-row">
+        <span>${escapeHTML(test.name)}</span>
+        <span>${success ? "✓ PASS" : "✗ FAIL"}</span>
+      </div>
+    `;
+  }).join("");
+
+  const failed = tests.length-passed;
+
+  setStatus(
+    "testStatus",
+    `${passed}/${tests.length} tests passed. ${failed} failed.`,
+    failed ? "error" : "success"
+  );
+}
+
+$("searchForm").addEventListener("submit",handleCitySearch);
+$("refreshButton").addEventListener("click",loadWeather);
+$("historyButton").addEventListener("click",loadHistory);
+$("testButton").addEventListener("click",runAutomatedTests);
+$("celsiusButton").addEventListener("click",()=>setUnit("C"));
+$("fahrenheitButton").addEventListener("click",()=>setUnit("F"));
+
+window.addEventListener("online",()=>{
+  $("connectionStatus").textContent="Online";
+});
+
+window.addEventListener("offline",()=>{
+  $("connectionStatus").textContent="Offline";
+  setStatus("searchStatus","Internet connection lost. Previously loaded information may be outdated.","error");
+});
+
+$("year").textContent = new Date().getFullYear();
+
+setDefaultHistoryDates();
+
+$("connectionStatus").textContent =
+  navigator.onLine ? "Online" : "Offline";
+
+// Load initial New York weather.
+loadWeather();
+
+// Run the built-in quality checks automatically.
+runAutomatedTests();
+
+// Refresh current conditions every 10 minutes.
+setInterval(()=>{
+  if (navigator.onLine && !document.hidden) {
+    loadWeather();
+  }
+},10*60*1000);
+
+</script>
+</body>
+</html>
